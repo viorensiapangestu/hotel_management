@@ -5,7 +5,7 @@ require_once 'header.php';
 // --- FETCH DASHBOARD METRICS ---
 
 // 1. Total Rooms
-$totalRooms = $pdo->query("SELECT COUNT(*) FROM Rooms")->fetchColumn();
+$totalRooms = $pdo->query("SELECT COUNT(*) FROM rooms")->fetchColumn();
 
 // 2. Today's Expected Check-ins (Pending/Confirmed for today)
 $todayCheckIns = $pdo->query("SELECT COUNT(*) FROM Reservations WHERE check_in_date = CURDATE() AND status IN ('Pending', 'Confirmed')")->fetchColumn();
@@ -18,8 +18,8 @@ $inHouse = $pdo->query("SELECT COUNT(*) FROM Stay WHERE check_out_time IS NULL")
 
 // 5. Rooms Needing Cleaning (Dirty status)
 $dirtyRooms = $pdo->query("
-    SELECT COUNT(*) FROM Rooms r 
-    JOIN RoomStatus s ON r.status_id = s.status_id 
+    SELECT COUNT(*) FROM rooms r 
+    JOIN roomstatus s ON r.status_id = s.status_id 
     WHERE s.status_name LIKE '%Dirty%'
 ")->fetchColumn();
 
@@ -28,7 +28,7 @@ $recentBookings = $pdo->query("
     SELECT r.reservation_id, g.name, rm.room_number, r.check_in_date, r.status 
     FROM Reservations r
     JOIN Guests g ON r.guest_id = g.guest_id
-    LEFT JOIN Rooms rm ON r.room_id = rm.room_id
+    LEFT JOIN rooms rm ON r.room_id = rm.room_id
     ORDER BY r.reservation_id DESC LIMIT 5
 ")->fetchAll();
 ?>
