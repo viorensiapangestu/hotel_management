@@ -1,0 +1,32 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      DB_HOST: db
+      DB_NAME: hotel_management
+      DB_USER: hotel_user
+      DB_PASSWORD: hotel_password_dev
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: hotel_management
+      MYSQL_USER: hotel_user
+      MYSQL_PASSWORD: hotel_password_dev
+      MYSQL_ROOT_PASSWORD: root_password_dev
+    volumes:
+      - hotel_db_data:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/01-database.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_password_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  hotel_db_data:
