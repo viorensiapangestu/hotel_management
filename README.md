@@ -1,1 +1,1 @@
-# hotel_managemnet
+# hotel_management
